@@ -3,13 +3,13 @@
 """
 Estructura de codigo
 
-1) Interaccion con base de datos, como se van a leer los datos
+x1) Interaccion con base de datos, como se van a leer los datos
 
-1.1) Generar farmacias ficticias
+x1.1) Generar farmacias ficticias
 
 2) Generar una entrada para el usuario
 
-3) En base a la entrada buscar en la base de datos el medicamento
+x3) En base a la entrada buscar en la base de datos el medicamento para saber en que farmacia se encuentra
 
 4) Con el medicamento buscar en la base de datos que otro es similar en la misma farmacia y en las otras farmacias
 
@@ -18,8 +18,6 @@ Estructura de codigo
 """
 
 import pandas as pd
-
-
 
 # Base de datos
     
@@ -43,7 +41,8 @@ far1 = {
     "Sertralina": ["Sertralina"],
     "Venlafaxina": ["Venlafaxina"],
     "Diazepam": ["Diazepam"],
-    "Clonazepam": ["Clonazepam"]
+    "Clonazepam": ["Clonazepam"],
+    "Acetaminofen": ["Acetaminofen"],
 } 
     
 far2 = {
@@ -66,7 +65,8 @@ far2 = {
     "Citalopram": ["Citalopram"],
     "Venlafaxina": ["Venlafaxina"],
     "Diazepam": ["Diazepam"],
-    "Gabapentina": ["Gabapentina"]
+    "Gabapentina": ["Gabapentina"],
+    "Medicamento de ejemplo": ["Enalapril maleato"],
 } 
 
 far3 = {
@@ -89,33 +89,53 @@ far3 = {
     "Venlafaxina": ["Venlafaxina"],
     "Olanzapina": ["Olanzapina"],
     "Carbamazepina": ["Carbamazepina"],
-    "Gabapentina": ["Gabapentina"]
+    "Gabapentina": ["Gabapentina"],
+    "Medicamento de ejemplo": ["Enalapril maleato"],
 }
 
+## Nombres de las farmacias
+Nom_far = ["far1","far2","far3"]
+
+## DataFrame para la app (Salida)
+df_app = []
+
+## Convierte la base de tados de ejemplo en un archivo CSV
 farmacias = [far1, far2, far3]
-df0 = pd.DataFrame(farmacias, index= ["far1","far2","far3"])
+df0 = pd.DataFrame(farmacias, index= Nom_far)
 df0.to_csv('far_fic.csv', index=False)
 
-
+## Leer el archivo CSV con la base de datos
 df = pd.read_csv('far_fic.csv')
-print("DataFrame")
-print(df)
+df.index = Nom_far
 
-
-# Entrada de datos
+# Datos de la app (Entrada)
 Med = "Enalapril"
 
+# Resultado de busqueda
+res_bus = {}
 
 
-# Algoritmo de busqueda
+# Busqueda del medicamento en la farmacia
 
 if Med in df:
+    # Serie del medicamento "Med"
     Med_df = df[Med]
-    print(Med_df)
+    Med_df.index = Nom_far
+
+    # Indice y valor de la serie por farmacia
     for idx, val in Med_df.items():
         if pd.isnull(val):
-            print(f"En la {idx} no se encuentra el medicamento {Med}")
+            # Si es un valor nulo
+            res_bus[idx] = val
         else:
-            print(f"En la {idx} se encuentra el medicamento {Med} con la componentes {val[0]}")
+            # Si el medicamnto se encuestra
+            res_bus[idx] = val
 else:
+    # Si el medifamento no esta en ninguna farmacia
     print(f"El medicamento {Med} no está disponible en ninguna farmacia")
+
+
+## Serie del resultado de la primera busqueda
+
+ser_res_bus = pd.Series(res_bus)
+print(ser_res_bus)
