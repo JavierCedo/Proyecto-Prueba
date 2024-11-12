@@ -139,3 +139,26 @@ else:
 
 ser_res_bus = pd.Series(res_bus)
 print(ser_res_bus)
+print("-"*30)
+
+
+
+
+
+
+
+
+
+##   ## Busqueda de los componentes del medicamento en otras farmacias
+##   
+##   print(res_bus)
+##   
+##   for i,j in res_bus.items():
+##       if j == "nan":
+##           pass
+##       else:
+##           comp = j
+##           print("Componente a buscar ",comp)
+##           indices = df.index[df[Med] == j].tolist()
+##           print("Indice donde esta el componente ", indices)
+##           pass
