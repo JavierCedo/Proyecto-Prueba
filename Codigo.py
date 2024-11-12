@@ -93,13 +93,16 @@ far3 = {
 }
 
 farmacias = [far1, far2, far3]
-df = pd.DataFrame(farmacias, index= ["far1","far2","far3"])
+df0 = pd.DataFrame(farmacias, index= ["far1","far2","far3"])
+df0.to_csv('far_fic.csv', index=False)
+
+
+df = pd.read_csv('far_fic.csv')
+print("DataFrame")
 print(df)
 
 
-
 # Entrada de datos
-
 Med = "Enalapril"
 
 
