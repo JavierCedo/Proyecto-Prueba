@@ -43,6 +43,7 @@ far1 = {
     "Diazepam": ["Diazepam"],
     "Clonazepam": ["Clonazepam"],
     "Acetaminofen": ["Acetaminofen"],
+    "Amoxicilina con ácido clavulánico": ["Amoxicilina", "Ácido clavulánico", "Otro", "Ejemplo"],
 } 
     
 far2 = {
@@ -61,7 +62,7 @@ far2 = {
     "Amlodipino besilato": ["Amlodipino"],
     "Hidroclorotiazida": ["Hidroclorotiazida"],
     "Levotiroxina sódica": ["Levotiroxina"],
-    "Alprazolam": ["Alprazolam"],
+    "Alprazolam": ["Alprazolam", "far2"],
     "Citalopram": ["Citalopram"],
     "Venlafaxina": ["Venlafaxina"],
     "Diazepam": ["Diazepam"],
@@ -107,29 +108,33 @@ df0.to_csv('far_fic.csv', index=False)
 ## Leer el archivo CSV con la base de datos
 df = pd.read_csv('far_fic.csv')
 df.index = Nom_far
+#   print(df)
 
 # Datos de la app (Entrada)
-Med = "Enalapril"
+Med = "Alprazolam" #"Amoxicilina con ácido clavulánico"       # "Enalapril" 
+print("Medicamento a buscar:", Med)
 
-# Resultado de busqueda
-res_bus = {}
 
+# Almacenar datos de los resultado de busqueda
+Med_bus_1 = {}
+Com_bus_1 = []
 
 # Busqueda del medicamento en la farmacia
 
 if Med in df:
     # Serie del medicamento "Med"
     Med_df = df[Med]
-    Med_df.index = Nom_far
 
     # Indice y valor de la serie por farmacia
     for idx, val in Med_df.items():
         if pd.isnull(val):
             # Si es un valor nulo
-            res_bus[idx] = val
+            Med_bus_1[idx] = val
         else:
             # Si el medicamnto se encuestra
-            res_bus[idx] = val
+            Med_bus_1[idx] = "Existe"
+            val = val.replace("[","").replace("]","").replace("'"," ").split(', ')
+            Com_bus_1.append(val)
 else:
     # Si el medifamento no esta en ninguna farmacia
     print(f"El medicamento {Med} no está disponible en ninguna farmacia")
@@ -137,28 +142,18 @@ else:
 
 ## Serie del resultado de la primera busqueda
 
-ser_res_bus = pd.Series(res_bus)
-print(ser_res_bus)
+ser_Med_bus_1 = pd.Series(Med_bus_1)
+print("-"*30)
+print(ser_Med_bus_1)
 print("-"*30)
 
 
 
 
+## Busqueda de los componentes del medicamento en otras farmacias
+
+df_Com_bus_1 = pd.DataFrame(Com_bus_1)
+
+print(df_Com_bus_1)
 
 
-
-
-
-##   ## Busqueda de los componentes del medicamento en otras farmacias
-##   
-##   print(res_bus)
-##   
-##   for i,j in res_bus.items():
-##       if j == "nan":
-##           pass
-##       else:
-##           comp = j
-##           print("Componente a buscar ",comp)
-##           indices = df.index[df[Med] == j].tolist()
-##           print("Indice donde esta el componente ", indices)
-##           pass
