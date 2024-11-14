@@ -43,7 +43,7 @@ far1 = {
     "Diazepam": ["Diazepam"],
     "Clonazepam": ["Clonazepam"],
     "Acetaminofen": ["Acetaminofen"],
-    "Amoxicilina con ácido clavulánico": ["Amoxicilina", "Ácido clavulánico", "Otro", "Ejemplo"],
+    "Amoxicilina con ácido clavulánico": ["Amoxicilina", "Ácido clavulánico", "Otro", "Otro"],
 } 
     
 far2 = {
@@ -62,7 +62,7 @@ far2 = {
     "Amlodipino besilato": ["Amlodipino"],
     "Hidroclorotiazida": ["Hidroclorotiazida"],
     "Levotiroxina sódica": ["Levotiroxina"],
-    "Alprazolam": ["Alprazolam", "far2"],
+    "Alprazolam": ["Alprazolam", "Otro"],
     "Citalopram": ["Citalopram"],
     "Venlafaxina": ["Venlafaxina"],
     "Diazepam": ["Diazepam"],
@@ -97,9 +97,6 @@ far3 = {
 ## Nombres de las farmacias
 Nom_far = ["far1","far2","far3"]
 
-## DataFrame para la app (Salida)
-df_app = []
-
 ## Convierte la base de tados de ejemplo en un archivo CSV
 farmacias = [far1, far2, far3]
 df0 = pd.DataFrame(farmacias, index= Nom_far)
@@ -108,18 +105,16 @@ df0.to_csv('far_fic.csv', index=False)
 ## Leer el archivo CSV con la base de datos
 df = pd.read_csv('far_fic.csv')
 df.index = Nom_far
-#   print(df)
 
 # Datos de la app (Entrada)
-Med = "Alprazolam" #"Amoxicilina con ácido clavulánico"       # "Enalapril" 
+Med ="Alprazolam" #"Amoxicilina con ácido clavulánico" # "Enalapril"
 print("Medicamento a buscar:", Med)
-
 
 # Almacenar datos de los resultado de busqueda
 Med_bus_1 = {}
-Com_bus_1 = []
+Com_bus_1 = {}
 
-# Busqueda del medicamento en la farmacia
+## Busqueda del medicamento en la farmacia
 
 if Med in df:
     # Serie del medicamento "Med"
@@ -132,9 +127,9 @@ if Med in df:
             Med_bus_1[idx] = val
         else:
             # Si el medicamnto se encuestra
-            Med_bus_1[idx] = "Existe"
+            Med_bus_1[idx] = "Esta"
             val = val.replace("[","").replace("]","").replace("'"," ").split(', ')
-            Com_bus_1.append(val)
+            Com_bus_1[idx] = val
 else:
     # Si el medifamento no esta en ninguna farmacia
     print(f"El medicamento {Med} no está disponible en ninguna farmacia")
@@ -143,17 +138,14 @@ else:
 ## Serie del resultado de la primera busqueda
 
 ser_Med_bus_1 = pd.Series(Med_bus_1)
-print("-"*30)
-print(ser_Med_bus_1)
-print("-"*30)
-
-
+print("-"*40)
+print("*En que farmacia esta el medicamento*")
+print(ser_Med_bus_1.to_string())
+print("-"*40)
+print("*Componentes del medicamento*")
+df_Com_bus_1 = pd.Series(Com_bus_1)
+print(df_Com_bus_1.to_string())
 
 
 ## Busqueda de los componentes del medicamento en otras farmacias
-
-df_Com_bus_1 = pd.DataFrame(Com_bus_1)
-
-print(df_Com_bus_1)
-
-
+# Falta Hacer la Busqueda del similar
