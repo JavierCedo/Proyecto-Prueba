@@ -106,8 +106,11 @@ df0.to_csv('far_fic.csv', index=False)
 df = pd.read_csv('far_fic.csv')
 df.index = Nom_far
 
-# Datos de la app (Entrada)
-Med ="Alprazolam" #"Amoxicilina con ácido clavulánico" # "Enalapril"
+
+## Datos de la app (Entrada)
+#Med = "Alprazolam"
+Med = "Enalapril"
+#Med = "Amoxicilina con ácido clavulánico"
 print("Medicamento a buscar:", Med)
 
 # Almacenar datos de los resultado de busqueda
@@ -135,7 +138,7 @@ else:
     print(f"El medicamento {Med} no está disponible en ninguna farmacia")
 
 
-## Serie del resultado de la primera busqueda
+## Resultado de la busqueda del medicamento y sus componentes
 
 ser_Med_bus_1 = pd.Series(Med_bus_1)
 print("-"*40)
@@ -145,10 +148,32 @@ print("-"*40)
 print("*Componentes del medicamento*")
 df_Com_bus_1 = pd.Series(Com_bus_1)
 print(df_Com_bus_1.to_string())
+print("-"*40)
 
 
 ## Busqueda de los componentes del medicamento en otras farmacias
-# Falta Hacer la Busqueda del similar
+
+Med_sim_bus_2 = {}
+
+for idx, val in df_Com_bus_1.items():
+    for comp in val:
+        for i in range(df.shape[0]):
+            for j in range(df.shape[1]):
+                encontrar = df.iloc[i,j]
+                encontrar = str(encontrar).replace("[","").replace("]","").replace("'","").strip()
+                if encontrar == str(comp).strip():
+                    Med_sim_bus_2[df.index[i]] = df.columns[j]
+        for idx, val in ser_Med_bus_1.items():
+            if str(val) != "nan":
+                Med_sim_bus_2.pop(idx)
+
+
+## Resultado de la busqueda de un medicamento similar
+
+print("*Medicamentos similares*")
+df_Med_sim_bus_2 = pd.Series(Med_sim_bus_2)
+print(df_Med_sim_bus_2.to_string())
+
 
 
 """
