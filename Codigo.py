@@ -149,3 +149,21 @@ print(df_Com_bus_1.to_string())
 
 ## Busqueda de los componentes del medicamento en otras farmacias
 # Falta Hacer la Busqueda del similar
+
+
+"""
+
+run Codigo.py:
+
+Medicamento a buscar: Alprazolam
+----------------------------------------
+*En que farmacia esta el medicamento*
+far1    Esta
+far2    Esta
+far3     NaN
+----------------------------------------
+*Componentes del medicamento*
+far1            [ Alprazolam ]
+far2    [ Alprazolam ,  Otro ]
+
+"""
