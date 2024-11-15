@@ -1,22 +1,3 @@
-# Aqui va el codigo de nuestro proyecto
-
-"""
-Estructura de codigo
-
-x1) Interaccion con base de datos, como se van a leer los datos
-
-x1.1) Generar farmacias ficticias
-
-2) Generar una entrada para el usuario
-
-x3) En base a la entrada buscar en la base de datos el medicamento para saber en que farmacia se encuentra
-
-4) Con el medicamento buscar en la base de datos que otro es similar en la misma farmacia y en las otras farmacias
-
-5) Devolver los resultados con; el medicamento requerido, similares y en que farmacia se encuestra cada medicamento
-
-"""
-
 import pandas as pd
 
 # Base de datos
@@ -90,7 +71,7 @@ far3 = {
     "Venlafaxina": ["Venlafaxina"],
     "Olanzapina": ["Olanzapina"],
     "Carbamazepina": ["Carbamazepina"],
-    "Gabapentina": ["Gabapentina"],
+    "Gabapentina": ["Gabapentina", "Otro"],
     "Medicamento de ejemplo": ["Enalapril maleato"],
 }
 
@@ -107,7 +88,8 @@ df = pd.read_csv('far_fic.csv')
 df.index = Nom_far
 
 
-## Datos de la app (Entrada)
+## Entrada de datos
+
 #Med = "Alprazolam"
 Med = "Enalapril"
 #Med = "Amoxicilina con ácido clavulánico"
@@ -116,18 +98,20 @@ print("Medicamento a buscar:", Med)
 # Almacenar datos de los resultado de busqueda
 Med_bus_1 = {}
 Com_bus_1 = {}
+Med_sim_bus_2 = {}
 
 ## Busqueda del medicamento en la farmacia
 
 if Med in df:
     # Serie del medicamento "Med"
-    Med_df = df[Med]
+    df_Med = df[Med]
 
     # Indice y valor de la serie por farmacia
-    for idx, val in Med_df.items():
+    for idx, val in df_Med.items():
         if pd.isnull(val):
             # Si es un valor nulo
             Med_bus_1[idx] = val
+            Med_sim_bus_2[idx] = val
         else:
             # Si el medicamnto se encuestra
             Med_bus_1[idx] = "Esta"
@@ -153,42 +137,59 @@ print("-"*40)
 
 ## Busqueda de los componentes del medicamento en otras farmacias
 
-Med_sim_bus_2 = {}
+# Serie que muestra en que farmacia no esta el medicamento
+print("*Farmacia donde no esta el medicamento*")
+ser_Med_sim_bus_2 = pd.Series(Med_sim_bus_2)
+print(ser_Med_sim_bus_2.to_string())
+print("-"*40)
 
-for idx, val in df_Com_bus_1.items():
-    for comp in val:
-        for i in range(df.shape[0]):
-            for j in range(df.shape[1]):
-                encontrar = df.iloc[i,j]
-                encontrar = str(encontrar).replace("[","").replace("]","").replace("'","").strip()
-                if encontrar == str(comp).strip():
-                    Med_sim_bus_2[df.index[i]] = df.columns[j]
-        for idx, val in ser_Med_bus_1.items():
-            if str(val) != "nan":
-                Med_sim_bus_2.pop(idx)
+nan_indices= ser_Med_sim_bus_2[pd.isnull(ser_Med_sim_bus_2)].index 
+
+# Búsqueda de un medicamento similar en farmacias donde no está el original 
+similar_meds = {}
 
 
-## Resultado de la busqueda de un medicamento similar
+for idx_far in nan_indices: 
+    for idx, val in df_Com_bus_1.items(): 
+        for comp in val: 
+            valores_indice = df.loc[idx_far].to_list()
+            for i in valores_indice:
+                i = str(i).replace("[","").replace("]","").replace("'"," ").replace(" ", "")
+                comp = comp.replace(" ", "")
+                #print(i, comp)
+                if i == comp:
+                    #print(i,comp)
+                    similar_meds[idx_far] = i
+                    #print("Existe similar")
+    #else:
+    #    print("No existe similar")
 
-print("*Medicamentos similares*")
-df_Med_sim_bus_2 = pd.Series(Med_sim_bus_2)
-print(df_Med_sim_bus_2.to_string())
 
+print("*Farmacia donde existe uno similar*")
+ser_similar_meds = pd.Series(similar_meds)
+print (ser_similar_meds.to_string())
 
 
 """
-
+*Ejemplo de salida*
 run Codigo.py:
 
-Medicamento a buscar: Alprazolam
+Medicamento a buscar: Enalapril
 ----------------------------------------
 *En que farmacia esta el medicamento*
 far1    Esta
-far2    Esta
+far2     NaN
 far3     NaN
 ----------------------------------------
 *Componentes del medicamento*
-far1            [ Alprazolam ]
-far2    [ Alprazolam ,  Otro ]
+far1    [ Enalapril maleato ]
+----------------------------------------
+*Farmacia donde no esta el medicamento*
+far2   NaN
+far3   NaN
+----------------------------------------
+*Farmacia donde existe uno similar*
+far2    Enalaprilmaleato
+far3    Enalaprilmaleato
 
 """
