@@ -24,7 +24,7 @@ far1 = {
     "Diazepam": ["Diazepam"],
     "Clonazepam": ["Clonazepam"],
     "Acetaminofen": ["Acetaminofen"],
-    "Amoxicilina con ácido clavulánico": ["Amoxicilina", "Ácido clavulánico", "Otro", "Otro"],
+    "Amoxicilina con ácido clavulánico": ["Amoxicilina", "Ácido clavulánico", "Otro"],
 } 
     
 far2 = {
@@ -48,14 +48,14 @@ far2 = {
     "Venlafaxina": ["Venlafaxina"],
     "Diazepam": ["Diazepam"],
     "Gabapentina": ["Gabapentina"],
-    "Medicamento de ejemplo": ["Enalapril maleato"],
+    "Diazepam": ["Enalapril maleato"],
 } 
 
 far3 = {
     "Paracetamol": ["Paracetamol"],
     "Ibuprofeno": ["Ibuprofeno"],
     "Naproxeno sódico": ["Naproxeno"],
-    "Amoxicilina con ácido clavulánico": ["Amoxicilina", "Ácido clavulánico"],
+    #"Amoxicilina con ácido clavulánico": ["Amoxicilina", "Ácido clavulánico"],
     "Diclofenaco potásico": ["Diclofenaco"],
     "Cetirizina": ["Cetirizina"],
     "Famotidina": ["Famotidina"],
@@ -70,9 +70,9 @@ far3 = {
     "Sertralina": ["Sertralina"],
     "Venlafaxina": ["Venlafaxina"],
     "Olanzapina": ["Olanzapina"],
-    "Carbamazepina": ["Carbamazepina"],
+    "Carbamazepina": ["Ácido clavulánico"],
     "Gabapentina": ["Gabapentina", "Otro"],
-    "Medicamento de ejemplo": ["Enalapril maleato"],
+    "Diazepam": ["Enalapril maleato"],
 }
 
 ## Nombres de las farmacias
@@ -89,6 +89,7 @@ df.index = Nom_far
 
 
 ## Entrada de datos
+
 
 #Med = "Alprazolam"
 Med = "Enalapril"
@@ -146,31 +147,41 @@ print("-"*40)
 nan_indices= ser_Med_sim_bus_2[pd.isnull(ser_Med_sim_bus_2)].index 
 
 # Búsqueda de un medicamento similar en farmacias donde no está el original 
-similar_meds = {}
+similar_med = {}
 
 
 for idx_far in nan_indices: 
     for idx, val in df_Com_bus_1.items(): 
-        for comp in val: 
-            valores_indice = df.loc[idx_far].to_list()
-            for i in valores_indice:
-                i = str(i).replace("[","").replace("]","").replace("'"," ").replace(" ", "")
-                comp = comp.replace(" ", "")
-                #print(i, comp)
-                if i == comp:
-                    #print(i,comp)
-                    similar_meds[idx_far] = i
-                    #print("Existe similar")
-    #else:
-    #    print("No existe similar")
-
+        for comp in val:
+            comp = comp.replace("'", "").strip().split(",")
+            for sub_comp in comp:
+                valores_indice = df.loc[idx_far].to_list()
+                for i in valores_indice:
+                    i = str(i).replace("'","").replace("[","").replace("]","").split(",")
+                    sub_comp = sub_comp.replace("'", "")
+                    for sub_i in i:
+                        if sub_i == sub_comp:
+                            valor = str(i)
+                            indice = idx_far
+                            columna_encontrada = df.columns[(df.loc[indice] == valor)].tolist()
+                            similar_med[idx_far] = columna_encontrada
+                        #else:
+                        #    similar_med[idx_far] = "No existe similar"
 
 print("*Farmacia donde existe uno similar*")
-ser_similar_meds = pd.Series(similar_meds)
-print (ser_similar_meds.to_string())
+ser_similar_med = pd.Series(similar_med)
+print (ser_similar_med.to_string())
+
+"""
+Falta corregir
+
+Cuando se tiene el medicamento y los componestes al buscar un medicamento similar no 
+busca y compara por cada componente. Lo hace por lista, no por elemento de la lista.
+"""
 
 
 """
+
 *Ejemplo de salida*
 run Codigo.py:
 
@@ -189,7 +200,7 @@ far2   NaN
 far3   NaN
 ----------------------------------------
 *Farmacia donde existe uno similar*
-far2    Enalaprilmaleato
-far3    Enalaprilmaleato
+far2    [Diazepam]
+far3    [Diazepam]
 
 """
