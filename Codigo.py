@@ -2,7 +2,7 @@ import pandas as pd
 
 # Base de datos
     
-far1 = {
+Farmacia1 = {
     "Paracetamol": ["Paracetamol"],
     "Ibuprofeno": ["Ibuprofeno"],
     "Aspirina": ["Ácido acetilsalicílico"],
@@ -27,7 +27,7 @@ far1 = {
     "Amoxicilina con ácido clavulánico": ["Amoxicilina", "Ácido clavulánico", "Javi er"],
 } 
     
-far2 = {
+Farmacia2 = {
     "Paracetamol": ["Paracetamol"],
     "Ibuprofeno": ["Ibuprofeno"],
     "Naproxeno": ["Naproxeno"],
@@ -51,7 +51,7 @@ far2 = {
     "Diazepam": ["Enalapril maleato"],
 } 
 
-far3 = {
+Farmacia3 = {
     "Paracetamol": ["Paracetamol"],
     "Ibuprofeno": ["Ibuprofeno"],
     "Naproxeno sódico": ["Naproxeno"],
@@ -82,7 +82,7 @@ Nom_far = ["Farmacia1","Farmacia2","Farmacia3"]
 
 ## Convierte la base de tados de ejemplo en un archivo CSV
 
-farmacias = [far1, far2, far3]
+farmacias = [Farmacia1, Farmacia2, Farmacia3]
 df0 = pd.DataFrame(farmacias, index= Nom_far)
 df0.to_csv('far_fic.csv', index=False)
 
@@ -93,10 +93,16 @@ df = pd.read_csv('far_fic.csv')
 df.index = Nom_far
 
 
-## Entrada de datos             Me dicamentos que han dado problemas y con lo que se estudian diferentes casos
+## Entrada de datos
 
-Med = "Alprazolam"
-#Med = "Enalapril"
+#       Med = input("Medicamento a buscar:").capitalize()
+
+#Me dicamentos que han dado problemas y con lo que se estudian diferentes casos
+
+Med = "Enalapril"
+#Med = "asdasd"
+#Med = "Alprazolam"
+#Med = "Aspirina"
 #Med = "Amoxicilina con ácido clavulánico"
 #Med = "Paracetamol"
 
@@ -114,25 +120,32 @@ similar_med = {}
 ## Busqueda del medicamento en la farmacia y sus componentes
 
 if Med in df:
-    # Serie del medicamento "Med"
     df_Med = df[Med]
-    # Indice y valor de la serie por farmacia
     for idx, val in df_Med.items():
         if pd.isnull(val):
-            # Si es un valor nulo
             Med_bus_1[idx] = val
             Med_sim_bus_2[idx] = val
         else:
-            # Si el medicamnto se encuestra
             Med_bus_1[idx] = "Esta"
             val = val.replace("[","").replace("]","").replace("'","").split(', ')
             Com_bus_1[idx] = val
 else:
-    # Si el medifamento no esta en ninguna farmacia
-    print(f"El medicamento {Med} no está disponible en ninguna farmacia")
+    Med_bus_1 = "No se encontro medicamento"
+    Com_bus_1 = "No se encontro medicamento"
 
 ser_Med_bus_1 = pd.Series(Med_bus_1)
 df_Com_bus_1 = pd.Series(Com_bus_1)
+
+
+if bool(Med_sim_bus_2):
+    pass
+else:
+    if bool(similar_med):
+        pass
+    else:
+        Med_sim_bus_2 = "No hace falta"
+        similar_med = "No hace falta"
+
 ser_Med_sim_bus_2 = pd.Series(Med_sim_bus_2)
 
 
@@ -156,8 +169,12 @@ for idx_far in nan_indices:
                                 indice = idx_far
                                 columna_encontrada = df.columns[(df.loc[indice] == valor)].tolist()
                                 similar_med[idx_far] = columna_encontrada
-                    else:
-                        pass
+
+if bool(similar_med):
+    pass
+else:
+    idx_far = 0
+    similar_med[idx_far] = "No se encontro similar en ninguna farmacia"
 
 ser_similar_med = pd.Series(similar_med)
 
@@ -192,19 +209,19 @@ run Codigo.py:
 Medicamento a buscar: Enalapril
 ----------------------------------------
 *En que farmacia esta el medicamento*
-far1    Esta
-far2     NaN
-far3     NaN
+Farmacia1    Esta
+Farmacia2     NaN
+Farmacia3     NaN
 ----------------------------------------
 *Componentes del medicamento*
-far1    [ Enalapril maleato ]
+Farmacia1    [Enalapril maleato]
 ----------------------------------------
 *Farmacia donde no esta el medicamento*
-far2   NaN
-far3   NaN
+Farmacia2   NaN
+Farmacia3   NaN
 ----------------------------------------
 *Farmacia donde existe uno similar*
-far2    [Diazepam]
-far3    [Diazepam]
+Farmacia2    [Diazepam]
+Farmacia3    [Diazepam]
 
 """
