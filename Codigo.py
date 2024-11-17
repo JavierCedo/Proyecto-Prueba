@@ -1,90 +1,9 @@
 import pandas as pd
 
-# Base de datos
-    
-Farmacia1 = {
-    "Paracetamol": ["Paracetamol"],
-    "Ibuprofeno": ["Ibuprofeno"],
-    "Aspirina": ["Ácido acetilsalicílico"],
-    "Amoxicilina": ["Amoxicilina"],
-    "Diclofenaco": ["Diclofenaco sódico"],
-    "Loratadina": ["Loratadina"],
-    "Omeprazol": ["Omeprazol"],
-    "Metformina": ["Metformina"],
-    "Simvastatina": ["Simvastatina"],
-    "Atorvastatina": ["Atorvastatina"],
-    "Enalapril": ["Enalapril maleato"],
-    "Losartán": ["Losartán potásico"],
-    "Amlodipino": ["Amlodipino besilato"],
-    "Furosemida": ["Furosemida"],
-    "Levotiroxina": ["Levotiroxina sódica"],
-    "Alprazolam": ["Alprazolam"],
-    "Sertralina": ["Sertralina"],
-    "Venlafaxina": ["Venlafaxina"],
-    "Diazepam": ["Diazepam"],
-    "Clonazepam": ["Clonazepam"],
-    "Acetaminofen": ["Acetaminofen"],
-    "Amoxicilina con ácido clavulánico": ["Amoxicilina", "Ácido clavulánico", "Javi er"],
-} 
-    
-Farmacia2 = {
-    "Paracetamol": ["Paracetamol"],
-    "Ibuprofeno": ["Ibuprofeno"],
-    "Naproxeno": ["Naproxeno"],
-    "Amoxicilina con ácido clavulánico": ["Amoxicilina", "Ácido clavulánico"],
-    "Diclofenaco sódico": ["Diclofenaco sódico"],
-    "Cetirizina": ["Cetirizina"],
-    "Famotidina": ["Famotidina"],
-    "Metformina clorhidrato": ["Metformina"],
-    "Rosuvastatina": ["Rosuvastatina"],
-    "Atorvastatina cálcica": ["Atorvastatina"],
-    "Lisinopril": ["Lisinopril"],
-    "Valsartán": ["Valsartán"],
-    "Amlodipino besilato": ["Amlodipino"],
-    "Hidroclorotiazida": ["Hidroclorotiazida"],
-    "Levotiroxina sódica": ["Levotiroxina"],
-    "Alprazolam": ["Alprazolam", "Otro"],
-    "Citalopram": ["Citalopram"],
-    "Venlafaxina": ["Venlafaxina"],
-    "Diazepam": ["Diazepam"],
-    "Gabapentina": ["Gabapentina"],
-    "Diazepam": ["Enalapril maleato"],
-} 
-
-Farmacia3 = {
-    "Paracetamol": ["Paracetamol"],
-    "Ibuprofeno": ["Ibuprofeno"],
-    "Naproxeno sódico": ["Naproxeno"],
-    "Diclofenaco potásico": ["Diclofenaco"],
-    "Cetirizina": ["Cetirizina"],
-    "Famotidina": ["Famotidina"],
-    "Metformina clorhidrato": ["Metformina"],
-    "Rosuvastatina cálcica": ["Rosuvastatina"],
-    "Atorvastatina cálcica": ["Atorvastatina"],
-    "Lisinopril": ["Lisinopril"],
-    "Valsartán": ["Valsartán"],
-    "Amlodipino besilato": ["Amlodipino"],
-    "Hidroclorotiazida": ["Hidroclorotiazida"],
-    "Levotiroxina sódica": ["Levotiroxina"],
-    "Sertralina": ["Sertralina", "Otro"],
-    "Venlafaxina": ["Venlafaxina"],
-    "Olanzapina": ["Olanzapina"],
-    "Carbamazepina": ["Ácido clavulánico"],
-    "Gabapentina": ["Gabapentina", "Javi er"],
-    "Diazepam": ["Enalapril maleato"],
-}
-
 
 ## Nombres de las farmacias
 
 Nom_far = ["Farmacia1","Farmacia2","Farmacia3"]
-
-
-## Convierte la base de tados de ejemplo en un archivo CSV
-
-farmacias = [Farmacia1, Farmacia2, Farmacia3]
-df0 = pd.DataFrame(farmacias, index= Nom_far)
-df0.to_csv('far_fic.csv', index=False)
 
 
 ## Leer el archivo CSV con la base de datos
@@ -93,7 +12,7 @@ df = pd.read_csv('far_fic.csv')
 df.index = Nom_far
 
 
-## Entrada de datos
+## Entrada de datos (falta arreglar para la interfaz)
 
 #       Med = input("Medicamento a buscar:").capitalize()
 
@@ -137,12 +56,8 @@ ser_Med_bus_1 = pd.Series(Med_bus_1)
 df_Com_bus_1 = pd.Series(Com_bus_1)
 
 
-if bool(Med_sim_bus_2):
-    pass
-else:
-    if bool(similar_med):
-        pass
-    else:
+if not Med_sim_bus_2:
+    if not similar_med:
         Med_sim_bus_2 = "No hace falta"
         similar_med = "No hace falta"
 
@@ -156,23 +71,18 @@ nan_indices= ser_Med_sim_bus_2[pd.isnull(ser_Med_sim_bus_2)].index
 for idx_far in nan_indices: 
     for idx, val in df_Com_bus_1.items(): 
         for comp in val:
-            comp = comp.replace("'", "").strip().split(",")
-            for sub_comp in comp:
-                valores_indice = df.loc[idx_far].to_list()
-                for i in valores_indice:
-                    if isinstance(i, str):
-                        sub_comp = sub_comp.replace("'", "")
-                        i = eval(i)
-                        for sub_i in i:
-                            if sub_i == sub_comp:
-                                valor = str(i)
-                                indice = idx_far
-                                columna_encontrada = df.columns[(df.loc[indice] == valor)].tolist()
-                                similar_med[idx_far] = columna_encontrada
+            valores_indice = df.loc[idx_far].to_list()
+            for i in valores_indice:
+                if isinstance(i, str):
+                    i = eval(i)
+                    for sub_i in i:
+                        if sub_i == comp:
+                            valor = str(i)
+                            indice = idx_far
+                            columna_encontrada = df.columns[(df.loc[indice] == valor)].tolist()
+                            similar_med[idx_far] = columna_encontrada
 
-if bool(similar_med):
-    pass
-else:
+if not similar_med:
     idx_far = 0
     similar_med[idx_far] = "No se encontro similar en ninguna farmacia"
 
