@@ -1,29 +1,61 @@
 import pandas as pd
+import kaggle
+import os
+import random
+
+## Configurar Kaggle
+#os.environ['KAGGLE_CONFIG_DIR'] = 'C:/Users/salce/.kaggle'
+#dataset = 'singhnavjot2062001/11000-medicine-details'
+#kaggle.api.dataset_download_files(dataset, path='.', unzip=True)
+
+data = pd.read_csv("Medicine_Details.csv", index_col=False)
+new_df = data[["Medicine Name", "Composition"]]
+
+df1 = new_df.sample(n=len(new_df)//2, replace=True).reset_index(drop=True)
+df2 = new_df.sample(n=len(new_df)//2, replace=True).reset_index(drop=True)
+df3 = new_df.sample(n=len(new_df)//2, replace=True).reset_index(drop=True)
+
+df1['DataFrame'] = 'farmacia1'
+df2['DataFrame'] = 'farmacia2'
+df3['DataFrame'] = 'farmacia3'
+
+df_combined = pd.concat([df1, df2, df3])
+
+df = df_combined.pivot_table(index='DataFrame', columns='Medicine Name', values='Composition', aggfunc=lambda x: x.iloc[0])
+
+print("DataFrame combinado y pivotado:")
+print(df)
 
 
-## Nombres de las farmacias
-
-Nom_far = ["Farmacia1","Farmacia2","Farmacia3"]
 
 
-## Leer el archivo CSV con la base de datos
 
-df = pd.read_csv('far_fic.csv')
-df.index = Nom_far
+### Nombres de las farmacias
+#
+#Nom_far = ["Farmacia1","Farmacia2","Farmacia3"]
+#
+#
+### Leer el archivo CSV con la base de datos
+#
+#df = pd.read_csv('Medicine_Details.csv')
+#df.index = Nom_far
+#
+#
+### Entrada de datos (falta arreglar para la interfaz)
+#
+##       Med = input("Medicamento a buscar:").capitalize()
+#
+###Me dicamentos que han dado problemas y con lo que se estudian diferentes casos
+#
+#Med = "Enalapril"
+##Med = "asdasd"
+##Med = "Alprazolam"
+##Med = "Aspirina"
+##Med = "Amoxicilina con ácido clavulánico"
+##Med = "Paracetamol"
 
 
-## Entrada de datos (falta arreglar para la interfaz)
-
-#       Med = input("Medicamento a buscar:").capitalize()
-
-#Me dicamentos que han dado problemas y con lo que se estudian diferentes casos
-
-Med = "Enalapril"
-#Med = "asdasd"
-#Med = "Alprazolam"
-#Med = "Aspirina"
-#Med = "Amoxicilina con ácido clavulánico"
-#Med = "Paracetamol"
+Med = "Anbid 500 Tablet"
 
 print("Medicamento a buscar:", Med)
 
