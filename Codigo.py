@@ -9,6 +9,8 @@ import random
 #kaggle.api.dataset_download_files(dataset, path='.', unzip=True)
 
 
+
+
 # Cosas a hacer
 
 ## Separar "Medicine Name" en tres columnas, Nombre, cantidad, presentacion, imagen del medicamento.
