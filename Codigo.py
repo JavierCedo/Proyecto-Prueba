@@ -85,6 +85,8 @@ data = pd.read_csv("Medicine_Details.csv", index_col=False)
 # Limpiar espacios en blanco en los nombres de las columnas
 data.columns = data.columns.str.strip()
 
+
+# arreglar
 # Función para separar nombre, dosis y presentación
 def separar_nombre_dosis_presentacion(medicamento):
     partes = medicamento.split()
@@ -108,32 +110,26 @@ def separar_nombre_dosis_presentacion(medicamento):
 # Aplicar la función de separación
 data[['Nombre', 'Dosis', 'Presentacion']] = data['Medicine Name'].apply(separar_nombre_dosis_presentacion)
 
+
+# Arreglar
 # Separar "Composition" en dos columnas: nombre_comp, cantidad_comp
-data[['nombre_comp', 'cantidad_comp']] = data['Composition'].str.split(' ', n=1, expand=True)
+data[['nombre_comp', 'cantidad_comp']] = data['Composition'].str.split('+', n=1, expand=True)
 
 # Eliminar filas donde 'Nombre' esté vacío
 data = data[data['Nombre'].notnull() & (data['Nombre'] != '')]
 
-# Eliminar duplicados
-data = data.drop_duplicates(subset=['Nombre', 'Uses'])
+
+# Verlo
+#       # Eliminar duplicados
+#       data = data.drop_duplicates(subset=['Nombre', 'Uses'])
+
+
+df = data[['Nombre', 'Dosis', 'Presentacion', 'Composition']]
+
+print(tabulate(df.head(20)))
+
 
 '''
-# Ajustar las opciones de visualización de pandas
-pd.set_option('display.max_columns', None)  # Mostrar todas las columnas
-pd.set_option('display.max_rows', None)     # Mostrar todas las filas
-pd.set_option('display.width', 1000)         # Ancho máximo de la salida
-pd.set_option('display.max_colwidth', 200)   # Ancho máximo de las columnas
-'''
-
-
-df = data.drop(['Medicine Name', 'Uses', 'Side_effects', 'Image URL', 'Manufacturer', 'Excellent Review %', 'Average Review %', 'Poor Review %', 'nombre_comp', 'cantidad_comp'], axis=1)
-
-df = df[['Nombre', 'Dosis', 'Presentacion', 'Composition']]
-
-#print(tabulate(df.head(20)))
-
-
-
 
 ### Farmacias Ficticias
 
@@ -143,11 +139,9 @@ df3 = df.sample(n=len(df)//2, replace=True).reset_index(drop=True)
 
 #print(tabulate(df1.head(10)))
 
-#print(tabulate(df1.head(2)))
-
-df1['DataFrame'] = 'farmacia1'
-df2['DataFrame'] = 'farmacia2'
-df3['DataFrame'] = 'farmacia3'
+#df1['DataFrame'] = 'farmacia1'
+#df2['DataFrame'] = 'farmacia2'
+#df3['DataFrame'] = 'farmacia3'
 
 df_combined = pd.concat([df1, df2, df3])
 
@@ -158,6 +152,8 @@ df_combined = pd.concat([df1, df2, df3])
 #print("DataFrame combinado y pivotado:")
 #print(tabulate(df))
 ##print(df.iloc[:, 454:455])
+
+'''
 
 
 
