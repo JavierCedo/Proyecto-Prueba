@@ -12,7 +12,7 @@ import webbrowser
 Nombre                Dosis    Presentacion     Nombres_componentes                      cantidades_componentes
 
 Avastin               400mg    Injection        [Bevacizumab]                            [400mg]
-Augmentin 625         625      Duo Tablet       [Amoxycillin, Clavulanic Acid]           [500mg, 125mg]
+Augmentin             625      Duo Tablet       [Amoxycillin, Clavulanic Acid]           [500mg, 125mg]
 Azithral              500      Tablet           [Azithromycin]                           [500mg]
 Ascoril               LS       Syrup            [Ambroxol, Levosalbutamol, Guaifenesin]  [30mg/5ml, 1mg/5ml, 50mg/5ml]
 Aciloc                150      Tablet           [Ranitidine]]                            [150mg]
@@ -145,7 +145,7 @@ data = data[data['Nombre'].notnull() & (data['Nombre'] != '')]
 
 df = data[['Nombre', 'Dosis', 'Presentacion', 'Composition']].set_index('Nombre')
 
-print(tabulate(df.head(20)))
+#print(tabulate(df.head(20)))
 
 ### Farmacias Ficticias
 
@@ -171,7 +171,7 @@ list_farms = {'Farmacia1':df1, 'Farmacia2':df2, 'Farmacia3':df3}
 
 med = "Nexpro"
 
-print("Medicamento a buscar:", med)
+#print("Medicamento a buscar:", med)
 
 ## Almacenar datos de los resultado de busqueda
 farm_esta_med = {}
@@ -183,25 +183,42 @@ farm_no_med = {}
 
 for nom_farm, df_farm in list_farms.items():
     if med in df_farm.index:
-        #print(f"El medicamento {med} esta en la farmacia {nom_farm}")
         comp = df_farm.loc[med, "Composition"]
         if type(comp) == pd.core.series.Series:
             for idx, val in comp.items():
-                #print(nom_farm, idx, val)
                 farm_y_comp[nom_farm] = val
                 farm_esta_med[nom_farm] = f"Esta {med}"
         else:
-            #print(nom_farm, med, comp)
             farm_y_comp[nom_farm] = comp
             farm_esta_med[nom_farm] = f"Esta {med}"
             
     else:
-        #print(f"El medicamento {med} no esta en la farmacia {nom_farm}")
         farm_no_med[nom_farm] = f"No esta {med}"
 
 print(farm_esta_med)
 print(farm_y_comp)
 print(farm_no_med)
+
+far_med_sml = {}
+
+for nom_farm, df_farm in list_farms.items():
+    for farm, comp in farm_y_comp.items():
+        ###                         Hacer bucle para comp que va a ser una lista ya hacer lo mismo para hacer la comparacion y buscar en el df.
+        valor = comp
+        columna = 'Composition'
+        indice = df_farm.index[df_farm[columna] == valor]
+        indice = pd.Series(indice)
+        #print(comp, "a buecar en", nom_farm )
+        #print("lista similares", indice)
+        lista = []
+        for idx, val in indice.items():
+                lista.append(val)
+                far_med_sml[nom_farm] = lista
+
+print(far_med_sml)
+
+
+
 
 
 ###############         Codigo antiguo          ################
