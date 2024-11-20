@@ -2,14 +2,14 @@ import pandas as pd
 import kaggle
 import os
 import random
+import matplotlib.pyplot as plt
+from tabulate import tabulate
+import webbrowser
 
 ## Configurar Kaggle
 #os.environ['KAGGLE_CONFIG_DIR'] = 'C:/Users/salce/.kaggle'
 #dataset = 'singhnavjot2062001/11000-medicine-details'
 #kaggle.api.dataset_download_files(dataset, path='.', unzip=True)
-
-
-
 
 # Cosas a hacer
 
@@ -18,37 +18,146 @@ import random
 ## Hacer graficas Usos, Efectos secundarios, "Excellent Review %,Average Review %,Poor Review %", monufactura.
 ## Recomendacion por componetes y usos.
 
+''' ## Graficas
+# Definición de la función para graficar gráficos circulares simplificados
+def plot_top_pie_chart(data, column, top_n=10):
+    top_data = data[column].value_counts().nlargest(top_n)
+    plt.figure(figsize=(8, 6))
+    top_data.plot.pie(autopct='%1.1f%%', startangle=140, colors=plt.cm.Paired.colors)
+    plt.axis('equal')  # Para que el gráfico sea un círculo
+    plt.title(f'Top {top_n} en {column}')
+    plt.show()
 
+# Graficar Uses (gráfico circular simplificado)
+if 'Uses' in data.columns:
+    plot_top_pie_chart(data, 'Uses')
+else:
+    print("La columna 'Uses' no se encuentra en el DataFrame.")
 
+# Graficar Side_effects (gráfico circular simplificado)
+if 'Side_effects' in data.columns:
+    plot_top_pie_chart(data, 'Side_effects')
+else:
+    print("La columna 'Side_effects' no se encuentra en el DataFrame.")
+
+# Graficar Reseñas (gráfico circular simplificado)
+review_columns = ['Excellent Review %', 'Average Review %', 'Poor Review %']
+if all(col in data.columns for col in review_columns):
+    plt.figure(figsize=(8, 6))
+    mean_reviews = data[review_columns].mean()
+    top_reviews = mean_reviews.nlargest(3)
+    top_reviews.plot.pie(autopct='%1.1f%%', startangle=140, colors=plt.cm.Paired.colors)
+    plt.axis('equal')
+    plt.title('Reseñas Promedio')
+    plt.show()
+else:
+    print("Una o más columnas de reseñas no se encuentran en el DataFrame.")
+
+# Graficar Manufacturer (gráfico circular simplificado)
+if 'Manufacturer' in data.columns:
+    plot_top_pie_chart(data, 'Manufacturer')
+else:
+    print("La columna 'Manufacturer' no se encuentra en el DataFrame.")
+'''
+
+''' ## Imagen
+# Función para buscar el URL de la imagen del medicamento principal
+def buscar_imagen_medicamento(nombre_medicamento):
+    medicamento = data[data['Nombre'].str.contains(nombre_medicamento, na=False, case=False)]
+    if not medicamento.empty:
+        return medicamento.iloc[0]['Image URL']  # Retorna el URL de la imagen del primer medicamento encontrado
+    return None
+
+# Ejemplo de uso de la función de búsqueda
+medicamento_principal = 'Paracetamol'  # Cambia esto por el medicamento que desees buscar
+url_imagen = buscar_imagen_medicamento(medicamento_principal)
+
+# Abrir el URL de la imagen en el navegador
+if url_imagen:
+    print(f"Abrir URL de la imagen para '{medicamento_principal}': {url_imagen}")
+else:
+    print(f"No se encontró imagen para el medicamento '{medicamento_principal}'.")
+'''
+
+# Cargar los datos
 data = pd.read_csv("Medicine_Details.csv", index_col=False)
-new_df = data[["Medicine Name", "Composition"]]
-#new_df[['Nombre', 'Dosis', 'Forma']] = new_df['Medicine Name'].str.split(' ', n=2, expand=True)
-neww = new_df['Medicine Name'].str.split(' ', n=2, expand=True)
-print(neww.iloc[100:110, :])
+
+# Limpiar espacios en blanco en los nombres de las columnas
+data.columns = data.columns.str.strip()
+
+# Función para separar nombre, dosis y presentación
+def separar_nombre_dosis_presentacion(medicamento):
+    partes = medicamento.split()
+    if len(partes) < 2:
+        return pd.Series([medicamento, None, None])  # Devuelve el nombre y None para dosis y presentación
+    
+    # La última parte es la presentación, la penúltima es la dosis
+    presentacion = partes[-1]
+    dosis = partes[-2]
+    
+    # El resto es el nombre
+    nombre = ' '.join(partes[:-2])
+    
+    # Si la presentación tiene más de una palabra (ejemplo: "Nasal Spray")
+    if len(partes) > 3:
+        presentacion = ' '.join(partes[-2:])
+        dosis = partes[-3]
+    
+    return pd.Series([nombre, dosis, presentacion])
+
+# Aplicar la función de separación
+data[['Nombre', 'Dosis', 'Presentacion']] = data['Medicine Name'].apply(separar_nombre_dosis_presentacion)
+
+# Separar "Composition" en dos columnas: nombre_comp, cantidad_comp
+data[['nombre_comp', 'cantidad_comp']] = data['Composition'].str.split(' ', n=1, expand=True)
+
+# Eliminar filas donde 'Nombre' esté vacío
+data = data[data['Nombre'].notnull() & (data['Nombre'] != '')]
+
+# Eliminar duplicados
+data = data.drop_duplicates(subset=['Nombre', 'Uses'])
+
+'''
+# Ajustar las opciones de visualización de pandas
+pd.set_option('display.max_columns', None)  # Mostrar todas las columnas
+pd.set_option('display.max_rows', None)     # Mostrar todas las filas
+pd.set_option('display.width', 1000)         # Ancho máximo de la salida
+pd.set_option('display.max_colwidth', 200)   # Ancho máximo de las columnas
+'''
 
 
+df = data.drop(['Medicine Name', 'Uses', 'Side_effects', 'Image URL', 'Manufacturer', 'Excellent Review %', 'Average Review %', 'Poor Review %', 'nombre_comp', 'cantidad_comp'], axis=1)
 
+df = df[['Nombre', 'Dosis', 'Presentacion', 'Composition']]
 
+#print(tabulate(df.head(20)))
 
 
 
 
 ### Farmacias Ficticias
 
-#df1 = new_df.sample(n=len(new_df)//2, replace=True).reset_index(drop=True)
-#df2 = new_df.sample(n=len(new_df)//2, replace=True).reset_index(drop=True)
-#df3 = new_df.sample(n=len(new_df)//2, replace=True).reset_index(drop=True)
-#
-#df1['DataFrame'] = 'farmacia1'
-#df2['DataFrame'] = 'farmacia2'
-#df3['DataFrame'] = 'farmacia3'
-#
-#df_combined = pd.concat([df1, df2, df3])
-#
+df1 = df.sample(n=len(df)//2, replace=True).reset_index(drop=True)
+df2 = df.sample(n=len(df)//2, replace=True).reset_index(drop=True)
+df3 = df.sample(n=len(df)//2, replace=True).reset_index(drop=True)
+
+#print(tabulate(df1.head(10)))
+
+#print(tabulate(df1.head(2)))
+
+df1['DataFrame'] = 'farmacia1'
+df2['DataFrame'] = 'farmacia2'
+df3['DataFrame'] = 'farmacia3'
+
+df_combined = pd.concat([df1, df2, df3])
+
+#print(tabulate(df_combined.head(20)))
+
 #df = df_combined.pivot_table(index='DataFrame', columns='Medicine Name', values='Composition', aggfunc=lambda x: x.iloc[0])
 #
 #print("DataFrame combinado y pivotado:")
-#print(df.iloc[:, 454:455])
+#print(tabulate(df))
+##print(df.iloc[:, 454:455])
 
 
 
