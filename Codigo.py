@@ -61,6 +61,14 @@ data = data.rename(columns={'Uses': 'Usos', 'Side_effects':'EfectosSecundarios'}
 
 df = data[['Nombre', 'Dosis', 'Presentacion', 'Composition', 'Usos', 'EfectosSecundarios']]
 
+
+prueba = data[['Nombre','Composition',]]
+
+prueba.apply(df.apply(lambda x: pd.Series([1, 2], index=['foo', 'bar']), axis=1))
+
+print(tabulate(prueba.head(20)))
+
+
 ### Farmacias Ficticias
 
 df1 = df.sample(n=len(df)//3, replace=True)
@@ -90,8 +98,6 @@ list_farms = {'Farmacia1':df1, 'Farmacia2':df2, 'Farmacia3':df3}
 ##Me dicamentos que han dado problemas y con lo que se estudian diferentes casos
 
 med = "Azithral"
-
-print("Medicamento a buscar:", med)
 
 ## Almacenar datos de los resultado de busqueda
 
@@ -131,7 +137,8 @@ for nom_farm, df_farm in list_farms.items():
                 lista.append(val)
                 far_med_sml[nom_farm] = lista
 
-
+'''
+print("Medicamento a buscar:", med)
 print("En que farmacia esta")
 print(farm_esta_med)
 print("componestes por farmacia")
@@ -140,9 +147,9 @@ print("En que farmacia no esta")
 print(farm_no_med)
 print("Similares")
 print(far_med_sml)
+'''
 
-
-''' ## Graficas
+#''' ## Graficas
 # Definición de la función para graficar gráficos circulares simplificados
 def plot_top_pie_chart(data, column, top_n=10):
     top_data = data[column].value_counts().nlargest(top_n)
@@ -184,7 +191,6 @@ else:
     print("La columna 'Manufacturer' no se encuentra en el DataFrame.")
 '''
 
-
 ''' ## Imagen
 # Función para buscar el URL de la imagen del medicamento principal
 def buscar_imagen_medicamento(nombre_medicamento):
@@ -202,4 +208,4 @@ if url_imagen:
     print(f"Abrir URL de la imagen para '{medicamento_principal}': {url_imagen}")
 else:
     print(f"No se encontró imagen para el medicamento '{medicamento_principal}'.")
-'''
+#'''
